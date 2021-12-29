@@ -1,0 +1,190 @@
+﻿@{
+    Layout = null;
+    ParkingSpace.Models.Mall _userMall = ViewBag.Mall;
+}
+
+<!DOCTYPE html>
+
+<html style="height:100%">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>遠東百貨 車位系統</title>
+    <link rel="shortcut icon" href="https://www.feds.com.tw/favicon.ico" type="image/x-icon" />
+    @*<link href="~/Content/bootstrap.css" rel="stylesheet" />*@
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/headerstyle.css" rel="stylesheet" />
+    <link href="~/Content/windowAlert.css" rel="stylesheet" />
+    <link href="~/Content/jquery.fancybox.min.css" rel="stylesheet" />
+
+</head>
+<body style="margin:0;padding:0;font-family:'Microsoft JhengHei'">
+    <div id="all">
+        @*@using (Html.BeginForm("LoadSpace", "ParkingSpace", "Post"))
+            {*@
+        @*<form id="Card" action="/UpdateMember" method="post">*@
+        <form id="SubmitForm" action="@Url.Action("LoadSpace", "ParkingSpace")" method="post">
+            <div id="fixed-header-slide">
+                <div id="fixed-header-wrap">
+                    <header>
+                        <img style="position:relative;left:15px;height:60px;width:auto;padding:10px;display:block;float:left" src="~/Image/FEDS.png" />
+                        <div style="float:right;padding:15px;text-align:center">
+                            <a onclick="SweetConfirm()" style="text-decoration:none;color:#2c6cb2;">
+                                <i style="color:#2c6cb2;" class="fa fa-user-circle fa-2x"></i>
+                                <span style="padding:10px">登出</span>
+                            </a>
+                        </div>
+                    </header>
+                </div>
+            </div>
+            <div id="content">
+                <div style="height:60px;width:85%;border-bottom:2px solid #808080;margin:0 auto;margin-top:80px">
+                    <span style="font-size:28px;padding:10px;color:#808080">車位輸入系統</span>
+                </div>
+
+                <div style="height:30%;width:80%;margin:0 auto;margin-top:30px">
+                    <div>
+                        <div class="form-group row" style="line-height:30px">
+                            <div class="col-sm-2 col-xs-4 control-label right">所在分公司 : </div>
+                            @if (_userMall.MallId == "10")
+                            {
+                                <div class="col-lg-2 col-md-3">
+                                    @Html.DropDownList("MallList", null, new { @class = "form-control" })
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-sm-2 col-xs-4">
+                                    @_userMall.Name
+                                </div>
+                            }
+
+                        </div>
+                        <div class="form-group row" style="line-height:30px">
+                            <div class="col-sm-3 col-lg-1 control-label right">汽車位</div><div class="col-lg-5 col-md-3"><input type="number" id="car" name="car" class="form-control" min="0" /></div>
+                        </div>
+                        <div class="form-group row" style="line-height:30px">
+                            <div class="col-sm-3 col-lg-1 control-label right">機車位</div><div class="col-lg-5 col-md-3"><input type="number" id="motor" name="motor" class="form-control" min="0" /></div>
+                        </div>
+
+                        <div class="form-group row" style="margin:0 auto;margin-top:30px">
+                            <input type="button" style="width:80px;height:50px;background-color:#2c6cb2;border-radius: 20px;border:1px;color:#ffffff" name="load" onclick="SubmitLoad()" value="確定" />&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="reset" style="width:80px;height:50px;background-color:#2c6cb2;border-radius: 20px;border:1px;color:#ffffff" name="empty" value="清空" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+<script defer src="https://use.fontawesome.com/releases/v5.0.10/js/all.js" integrity="sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+" crossorigin="anonymous"></script>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/jquery.fancybox.min.js"></script>
+<script src="~/Scripts/windowAlert.js"></script>
+<script type="text/javascript">
+    // Select your input element.
+    var carnum = document.getElementById('car');
+    var motornum = document.getElementById('motor');
+
+    // Listen for input event on numInput.
+    carnum.onkeydown = function (e) {
+        if (!((e.keyCode > 95 && e.keyCode < 106)
+            || (e.keyCode > 47 && e.keyCode < 58)
+            || e.keyCode == 8)) {
+            return false;
+        }
+    }
+    motornum.onkeydown = function (e) {
+        if (!((e.keyCode > 95 && e.keyCode < 106)
+            || (e.keyCode > 47 && e.keyCode < 58)
+            || e.keyCode == 8)) {
+            return false;
+        }
+    }
+
+    function SweetConfirm() {
+        swal({
+            title: '提醒',
+            text: "確定要登出嗎？",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '確定',
+            cancelButtonText: '取消'
+        }).then(function () {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Logout", "LogIn")',
+                data: 'id = @ViewBag.UserNo',
+                success: function (data) {
+                    swal({
+                        title: '登出',
+                        text: '您已成功登出系統!!!!',
+                        type: 'success',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: '確定'
+                    }).then(function () {
+                        setTimeout(function () { location.href = "@Url.Action("LogIn", "LogIn")"; }, 0);
+                    })
+                }
+            })
+            return true;
+        });
+    }
+
+    function SubmitLoad() {
+        //var form = $('#SubmitForm');
+        //var data = form.serialize();
+        var data = new FormData($("#SubmitForm")[0]);
+        var _userNo = "@ViewBag.User";
+        var _mallId = "";
+        var _carNum = $('#car').val();
+        var _motorNum = $('#motor').val();
+
+        if (@_userMall.MallId != "10") {
+            _mallId = "@_userMall.MallId"
+        }
+        else {
+            _mallId = $('#MallList :selected').val();
+        }
+
+        if (_carNum == "" && _motorNum == "") {
+            swal({
+                title: "請輸入車位數",
+                type: "error",
+            });
+            return false;
+        }
+
+        data.append('userNo', _userNo);
+        data.append('selectMall', _mallId);
+
+        $.ajax({
+            url: '@Url.Action("LoadSpace", "ParkingSpace")',
+            type: 'POST',
+            data: data,
+            dataType: "json",
+            processData: false,
+            contentType: false
+        }).done(function (result) {
+            if (result.IsSuccess == true) {
+                swal({
+                    title: "更新車位成功",
+                    type: "success",
+                });
+            }
+            else {
+                swal({
+                    title: "更新車位失敗",
+                    text: result.Message,
+                    type: "error",
+                });
+                return false
+            }
+        })
+    };
+
+</script>
+
